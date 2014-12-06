@@ -1,9 +1,19 @@
 (defproject hivewing-images "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
-  :license {:name "Eclipse Public License"
-            :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.6.0"]]
+  :description "Hivewing Images manager worker"
+  :url "http://images.hivewing.io"
+  :dependencies [
+                 [org.clojure/clojure "1.6.0"]
+                 [environ "1.0.0"]
+                 [hivewing-core "0.1.0-SNAPSHOT"]
+                 ;[amazonica "0.2.29" :exclusions [joda-time]]
+                ]
+
+  :plugins [[s3-wagon-private "1.1.2"]
+            [lein-environ "1.0.0"]]
+  :repositories [["hivewing-core" {:url "s3p://clojars.hivewing.io/hivewing-core/releases"
+                                   :username "AKIAJCSUM5ZFGI7DW5PA"
+                                   :passphrase "UcO9VGAaGMRuJZbgZxCiz0XuHmB1J0uvzt7WIlJK"}]]
+
   :main ^:skip-aot hivewing-images.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
