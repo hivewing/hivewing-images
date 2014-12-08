@@ -4,7 +4,7 @@
   :dependencies [
                  [org.clojure/clojure "1.6.0"]
                  [environ "1.0.0"]
-                 [hivewing-core "0.1.0"]
+                 [hivewing-core "0.1.1"]
                 ]
 
   :plugins [[s3-wagon-private "1.1.2"]

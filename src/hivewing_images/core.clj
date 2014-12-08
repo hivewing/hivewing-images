@@ -15,6 +15,8 @@
   image-branch (:image_branch (core-hive/hive-get hive-uuid))
   (packaged-hive-image-url hive-uuid "master")
   (update-worker-image-refs hive-uuid "master")
+  (def hive-uuid "dfc5d2c4-7972-11e4-8732-b334ee7e2863")
+  (core-hive-image/hive-images-send-images-update-message hive-uuid)
   )
 
 (defn packaged-hive-image-url
@@ -93,7 +95,7 @@
   "Start up the subscribe loop and try to process any incoming messages"
   [& args]
   (println "Starting hivewing-images process")
-  (let [incoming-queue (:queue-url (core-hive-image/hive-images-sqs-queue))]
+  (let [incoming-queue (core-hive-image/hive-images-sqs-queue)]
     (logger/info "Incoming queue: " incoming-queue)
     (while true
       (let [msgs (:messages (sqs/receive-message config/sqs-aws-credentials
