@@ -1,5 +1,5 @@
-(defproject hivewing-images "0.1.0-SNAPSHOT"
-  :description "Hivewing Images manager worker"
+(defproject hivewing-images "0.1.0"
+  :description "Hivewing Images gitolite manager worker"
   :url "http://images.hivewing.io"
   :dependencies [
                  [org.clojure/clojure "1.6.0"]
