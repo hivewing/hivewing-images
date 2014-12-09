@@ -12,7 +12,7 @@
   :repositories [["hivewing-core" {:url "s3p://clojars.hivewing.io/hivewing-core/releases"
                                    :username "AKIAJCSUM5ZFGI7DW5PA"
                                    :passphrase "UcO9VGAaGMRuJZbgZxCiz0XuHmB1J0uvzt7WIlJK"}]]
-
+  :uberjar-name "hivewing-images_%s.jar"
   :main ^:skip-aot hivewing-images.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
