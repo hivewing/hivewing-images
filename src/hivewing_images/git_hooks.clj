@@ -1,5 +1,5 @@
 (ns hivewing-images.git-hooks
-  (:require [hivewing-core.hive-image :as core-hive-image]
+  (:require [hivewing-core.hive-image-notification :as hin]
             [taoensso.timbre :as logger])
   (:gen-class))
 
@@ -8,10 +8,9 @@
   It should queue up a message in SQS to update things internally
   based on this new information"
   [& argv]
-    (println "Hi" argv)
 
-;lein exec -pe "(do \
-;  (require 'hivewing-core.hive-image) \
-;  (let [hive-uuid \"$GL_REPO\"] \
-;  (hivewing-core.hive-image/hive-images-set-update-message hive-uuid)))"
-  )
+  (let [[hook hive-uuid] argv]
+    (case hook
+      "post-receive" (hin/hive-images-notification-send-images-update-message hive-uuid)
+      "default" (logger/error "This is comfusing. This is not a valid hook" hook)
+      )))
