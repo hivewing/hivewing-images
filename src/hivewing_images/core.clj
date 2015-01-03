@@ -22,22 +22,29 @@
   )
 
 (defn packaged-hive-image-url
+  "Returns a packaged hive image url OR nil, if there is nothing
+  to be packaged yet"
   [hive-uuid branch-name]
   ; Resolve branch name to a ref
   (logger/info "Looking up hive " hive-uuid " @ branch " branch-name)
   (let [resolved-ref   (hi/hive-image-resolve-ref hive-uuid branch-name)]
     (logger/info "Resolved branch to " resolved-ref)
-    ; Package if needed this ref for deploy on S3
-    ; return the URL for the packaged image
-    (try
-    (if (hi/hive-image-packaged? hive-uuid resolved-ref)
+    (if resolved-ref
       (do
-        (logger/info "Packaged alrady.")
-        (hi/hive-image-package-url hive-uuid resolved-ref))
-      (do
-        (logger/info "Packaging now...")
-        (hi/hive-image-package-image hive-uuid resolved-ref)))
-    (catch Exception e (println "Error: " (.getMessage e))))))
+        ; Package if needed this ref for deploy on S3
+        ; return the URL for the packaged image
+        (try
+          (if (hi/hive-image-packaged? hive-uuid resolved-ref)
+            (do
+              (logger/info "Packaged alrady.")
+              (hi/hive-image-package-url hive-uuid resolved-ref))
+            (do
+              (logger/info "Packaging now...")
+              (hi/hive-image-package-image hive-uuid resolved-ref)))
+        (catch Exception e (logger/error (str "Error: " (.getMessage e))))))
+        ;; Return nil when there is nothing to save.
+        nil
+      )))
 
 (defn update-worker-image-refs
   "You need to get the image ref from the repository and match it against
@@ -45,8 +52,10 @@
   [hive-uuid branch-name]
   (logger/info "Updating the worker image references")
   (let [package-url (packaged-hive-image-url hive-uuid branch-name)]
-    (logger/info "Updating hive " hive-uuid " @ branch " branch-name " with " package-url)
-    (hive/hive-update-hive-image-url hive-uuid package-url)))
+    (if package-url
+      (do
+        (logger/info "Updating hive " hive-uuid " @ branch " branch-name " with " package-url)
+        (hive/hive-update-hive-image-url hive-uuid package-url)))))
 
 (defn hive-update-processing
   "Process the updates that need to occur when a hive was updated.
@@ -88,7 +97,11 @@
         hive-uuid (:hive_uuid worker)
         image-branch (:image_branch (hive/hive-get hive-uuid))
         image-url (packaged-hive-image-url hive-uuid image-branch)]
-    (wc/worker-config-set-hive-image worker-uuid image-url)))
+      (if image-url
+        (do
+          (try
+            (wc/worker-config-set-hive-image worker-uuid image-url hive-uuid)
+          (catch Exception e (logger/error e)))))))
 
 (defn process-incoming-message
   "The messages are received by the system and processed here"
@@ -108,7 +121,7 @@
 (defn -main
   "Start up the subscribe loop and try to process any incoming messages"
   [& args]
-  (println "Starting hivewing-images process")
+  (logger/info "Starting hivewing-images process")
   (let [incoming-queue (hin/hive-images-notification-sqs-queue)]
     (logger/info "Incoming queue: " incoming-queue)
     (while true

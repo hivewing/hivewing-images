@@ -13,4 +13,5 @@
     (case hook
       "post-receive" (hin/hive-images-notification-send-images-update-message hive-uuid)
       "default" (logger/error "This is comfusing. This is not a valid hook" hook)
-      )))
+      ))
+    (System/exit 0))
