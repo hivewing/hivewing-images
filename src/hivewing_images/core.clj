@@ -114,7 +114,8 @@
           :hive-update (hive-update-processing data)
           :beekeeper-update (beekeeper-update-processing data)
           :image-update (image-update-processing data)
-          :worker-update (worker-update-processing data))
+          :worker-update (worker-update-processing data)
+          )
         (catch Exception ex
           (logger/error (str "Error: " (.getMessage ex))))))))
 

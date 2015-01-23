@@ -2,7 +2,7 @@
   :description "Hivewing Images gitolite manager worker"
   :url "http://images.hivewing.io"
   :dependencies [
-                 [org.clojure/clojure "1.6.0"]
+                 [org.clojure/clojure "1.7.0-alpha5"]
                  [environ "1.0.0"]
                  [hivewing-core "0.1.3-SNAPSHOT"]
                 ]
